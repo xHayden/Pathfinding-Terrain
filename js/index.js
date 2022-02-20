@@ -1,13 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
+let currentImage = "georgia"
+
+function runPathfinding() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    var heightmapImg = document.getElementById("heightmap");
     canvas.width = 1081;
     canvas.height = 1081;
-    
     let gridWidth = 1081;
     let gridHeight = 1081;
-    
     function getPathableArea(ctx, dim) {
         let imageMatrix = new Array((dim ** 2) * 4);
         let xCounter = 0;
@@ -41,9 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let trueCounter = 0;
         let falseCounter = 0;
         for (let i = 0; i < (dim ** 2); i++) {
-            
             try {
-                //if (i > 0 && i < (dim ** 2)) { // sorry first and last position, speed is more important :(
                     imageMatrix[i * 4 + 3] =
                         (isNaN(imageMatrix[i * 4 + 2]) || isNaN(imageMatrix[((i - 1) * 4) + 2]) ? true : (Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i - 1) * 4) + 2]) < margin)) &&
                         (isNaN(imageMatrix[i * 4 + 2]) || isNaN(imageMatrix[((i + 1) * 4) + 2]) ? true : (Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i + 1) * 4) + 2]) < margin)) &&
@@ -55,41 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // you need all of the directions to be usable to be able to move. aaaa I don't have time to fix this...
                         // it should only need to check the direction the particle wants to move, but that is implemented at the pathfinding algorithm level
                         // how can I fix it from this? I don't think I can. That has to be a limitation, I guess.
-                        
-                        //((Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i + 1) * 4) + 2]) < margin) ?? true)//&& 
-                        // (Math.abs(imageMatrix[((i+dim) * 4) + 2] - imageMatrix[i * 4 + 2]) < margin ?? true) &&
-                        // (Math.abs(imageMatrix[((i-dim) * 4) + 2] - imageMatrix[i * 4 + 2]) < margin ?? true )
-                    // console.log(
-                    //     imageMatrix[i * 4],
-                    //     imageMatrix[i * 4 + 1],
-                    //     (Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i - 1) * 4) + 2])), // current x prev x
-                    //     (Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i + 1) * 4) + 2])), // current x next x
-                    //     (Math.abs(imageMatrix[((i+dim) * 4) + 2] - imageMatrix[i * 4 + 2])) ?? "NA", // current y next y
-                    //     (Math.abs(imageMatrix[((i-dim) * 4) + 2] - imageMatrix[i * 4 + 2])) ?? "NA" // current y prev y
-                    // )
-                    // console.log(
-                    //     imageMatrix[i * 4],
-                    //     imageMatrix[i * 4 + 1],
-                    //     imageMatrix[((i+dim) * 4)],
-                    //     imageMatrix[((i+dim) * 4) + 1]
-                    // )
-                    //console.log(imageMatrix[i * 4 + 3])
-                    //console.log(imageMatrix[i * 4 + 3])
-                    // if (!Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i - 1) * 4) + 2]) < margin) {
-                    //     console.log(Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i - 1) * 4) + 2]))
-                    //     break;
-                    // }
-                //}
                 imageMatrix[i * 4 + 3] ? trueCounter++ : falseCounter++
-                // if (!imageMatrix[i * 4 + 3]) {
-                //     console.log(imageMatrix[i * 4], imageMatrix[i * 4 + 1], imageMatrix[((i - 1) * 4) + 2], imageMatrix[i * 4 + 2], imageMatrix[((i + 1) * 4) + 2])
-                //     console.log((Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i - 1) * 4) + 2]) < margin) ?? true)
-                //     console.log(imageMatrix[i * 4 + 2])
-                //     console.log(imageMatrix[((i - 1) * 4) + 2])
-                //     console.log((imageMatrix[i * 4 + 2] ?? 0) - (imageMatrix[((i - 1) * 4) + 2] ?? 0))
-                //     console.log((Math.abs(imageMatrix[i * 4 + 2] - imageMatrix[((i + 1) * 4) + 2]) < margin) ?? true)
-                //     console.log(imageMatrix[i * 4 + 2] - imageMatrix[((i - 1) * 4) + 2])
-                // }
             }
             catch (e) {
                 console.error(e)
@@ -98,11 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(trueCounter, falseCounter)
         return imageMatrix;
     }
-    
-    //heightmapImg.onload = function () {
-        let dim = 1080;
-        ctx.drawImage(heightmapImg, 0, 0);
-        var p = ctx.getImageData(1, 1, 1, 1).data;
+    let dim = 1080;
+    ctx.clearRect(0, 0, ctx.width, ctx.height);
+    let heightmapImage = new Image();
+    heightmapImage.src = `images/${currentImage}.png`;
+    heightmapImage.onload = () => {
+        ctx.drawImage(heightmapImage, 0, 0);
         pointData = getPathableArea(ctx, (dim+1));
         var grid = new PF.Grid(gridWidth, gridHeight);
         for (let i = 0; i < ((dim + 1) ** 2); i++) {
@@ -120,6 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Path length: " + path.length);
         console.log(`Image width: ${dim}`);
         console.log("Ratio: " + path.length/dim);
-    //}
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {+
+    runPathfinding();
+    document.getElementById("button").onclick = (e) => {
+        e.preventDefault();
+        currentImage = document.getElementById("heightmap-select").value;
+        runPathfinding();
+    }
 })
 

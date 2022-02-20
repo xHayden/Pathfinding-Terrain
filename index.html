@@ -8,9 +8,20 @@
     <script type="text/javascript" src="bower_components/pathfinding/pathfinding-browser.min.js"></script>
 </head>
 
-<body style="margin: auto">
-    <canvas id="canvas"></canvas>
-    <img src="images/georgia.png" id="heightmap" style="display:none">
+<body style="margin: auto; display: flex; flex-direction: column;">
+    <div>
+        <select id="heightmap-select" name="heightmaps">
+            <option value="georgia">Georgia</option>
+            <option value="florida">Florida</option>
+            <option value="sanfranscisco_bay">California (San Francisco Bay)</option>
+            <option value="balkans">Balkans (Mostly Greece)</option>
+            <option value="germany">Germany (Northern)</option>
+        </select>
+        <button id="button">Select this heightmap.</button>
+    </div>
+    <div>
+        <canvas id="canvas"></canvas>
+    </div>
     <script src="js/index.js"></script>
 </body>
 

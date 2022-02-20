@@ -81,6 +81,7 @@ function runPathfinding() {
             let node = path[i];
             ctx.fillRect(node[0], node[1], 5, 5);
         }
+        document.getElementById("results").innerText = `Path length: ${path.length}`
         console.log("Path length: " + path.length);
         console.log(`Image width: ${dim}`);
         console.log("Ratio: " + path.length/dim);
